@@ -33,7 +33,7 @@ dependencies:
   firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.13.0+1
   fluttertoast: ^4.0.0
-  flutter_svg: ^0.17.4
+  flutter_svg:
 
 dev_dependencies:
   flutter_test:
