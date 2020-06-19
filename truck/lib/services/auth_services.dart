@@ -6,7 +6,7 @@ import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/loginScreen.dart';
 
 
-class AuthService {
+class AuthService  with ChangeNotifier{
   //Handles Auth
   handleAuth() {
     return StreamBuilder(
@@ -15,12 +15,24 @@ class AuthService {
           
           
             
-             if (snapshot.hasData) {
-            return HomeScreen();
-          } else {
-            return LoginScreen();
-          }});
-          }
+          //    if (snapshot.hasData) {
+          //   return HomeScreen();
+          // } else {
+          //   return LoginScreen();
+          // }});
+          // }
+          if (snapshot.hasData) {
+        if (snapshot.data.providerData.length == 1) { // logged in using email and password
+          return snapshot.data.isEmailVerified
+              ? HomeScreen()
+              : LoginScreen();
+        } else { // logged in using other providers
+          return HomeScreen();
+        }
+      } else {
+        return LoginScreen();
+      }
+        },);}
          
   
 

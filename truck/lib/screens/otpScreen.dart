@@ -233,14 +233,14 @@ class _OTPScreenState extends State<OTPScreen> {
   //       // Handle loogged in state
   //     //  user = value.user;
   //       print(value.user.phoneNumber);
-        // Navigator.pop(context);
+        Navigator.pop(context);
         // Navigator.pushNamed(context, HomeScreen.routeName);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
-            (Route<dynamic> route) => false);
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => HomeScreen(),
+        //     ),
+        //     (Route<dynamic> route) => false);
   //     } else {
   //       showToast("Error validating OTP, try again", Colors.red);
   //     }
