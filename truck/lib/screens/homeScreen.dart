@@ -1,12 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truck/services/auth_services.dart';
 
 class HomeScreen extends StatefulWidget {
+   static const routeName = '/homeScreen';
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    _signOut() async {
+      _firebaseAuth == null? print(2):print(_firebaseAuth.currentUser());
+    await _firebaseAuth.signOut();
+    
+   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,12 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               onChanged: (itemIdentifier) {
                 if (itemIdentifier == 'logout') {
-                  FirebaseAuth.instance.signOut();
-                }
-              }),
-        ],
-      ),
-      body: Container(),
-    );
-  }
+                                // AuthService().signOut();
+                                _signOut();
+                                                                  }
+                                }),
+                          ],
+                        ),
+                        body: Container(),
+                      );
+                    }
+                  
 }
