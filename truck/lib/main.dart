@@ -18,9 +18,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+<<<<<<< HEAD
       home:AuthService.handleAuth(),
       
       //  LoginScreen()
+=======
+      home: AuthService().handleAuth(),
+       routes: {
+                HomeScreen.routeName: (ctx) => HomeScreen(),},
+>>>>>>> 7471a499309c8924c875bd790ed49d871c64a079
     );
   }
 }
