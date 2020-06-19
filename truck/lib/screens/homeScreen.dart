@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truck/services/auth_services.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,7 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               onChanged: (itemIdentifier) {
                 if (itemIdentifier == 'logout') {
-                  FirebaseAuth.instance.signOut();
+                  print('signout req sending');
+                  AuthService.signOut();
+                  print('handling auth req sending');
+                  
                 }
               }),
         ],
