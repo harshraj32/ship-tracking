@@ -35,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child:
             StatefulBuilder(builder: (BuildContext context, StateSetter state) {
           return SingleChildScrollView(
-
             child: Card(
               elevation: 8,
               shape: RoundedRectangleBorder(
