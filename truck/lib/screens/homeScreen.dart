@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truck/screens/loginScreen.dart';
 import 'package:truck/services/auth_services.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -68,7 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _signOut() async {
     _firebaseAuth == null ? print(2) : print(_firebaseAuth.currentUser());
-    await _firebaseAuth.signOut();
+    await _firebaseAuth.signOut().whenComplete(() => Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ),
+            (Route<dynamic> route) => false));
+     
   }
 
   @override
