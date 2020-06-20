@@ -2,13 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truck/screens/authScreen.dart';
 import 'package:truck/screens/homeScreen.dart';
+import 'package:truck/screens/loginScreen.dart';
 
 import 'package:truck/screens/loginScreen.dart';
 
 
 class AuthService  with ChangeNotifier{
   //Handles Auth
-  handleAuth() {
+ handleAuth() {
+   print('handiling auth pages');
     return StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (BuildContext context, snapshot) {

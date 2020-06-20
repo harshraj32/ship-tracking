@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/services/auth_services.dart';
 import './screens/loginScreen.dart';
-
 void main() {
   runApp(MyApp());
 }
