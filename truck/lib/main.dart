@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/services/auth_services.dart';
 import './screens/loginScreen.dart';
-<<<<<<< HEAD
-import 'package:firebase_auth/firebase_auth.dart';
-=======
-
->>>>>>> 1f9fa9b17d78ca3e493992a10b61d8a8b8ef7a2f
 void main() {
   runApp(MyApp());
 }
