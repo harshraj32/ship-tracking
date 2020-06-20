@@ -12,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   final Firestore _auth = Firestore.instance;
   final _formKey = GlobalKey<FormState>();
   var _vehicleNo = '';
@@ -81,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
       appBar: AppBar(
         title: Text("Home"),
         actions: [
@@ -211,6 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onPressed: () {
                       _trySubmit();
+                      showSnackBar();
+                    
                     },
                     padding: EdgeInsets.all(16.0),
                   ),
@@ -222,4 +226,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+    void showSnackBar() {
+    final snackBarContent = SnackBar(
+      content: Text("vechile details successfully added"),
+      action: SnackBarAction(
+          label: 'UNDO', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+    );
+    _scaffoldkey.currentState.showSnackBar(snackBarContent);
+  }
+
+
+
+
 }
