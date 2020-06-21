@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:truck/screens/homeScreen.dart';
+// import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/otpInput.dart';
+import 'package:truck/screens/registration_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   final String mobileNumber;
@@ -167,7 +168,7 @@ class _OTPScreenState extends State<OTPScreen> {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => HomeScreen(
+                builder: (context) => RegistrationScreen(
                     // user: value.user,
                     ),
               ),
@@ -227,7 +228,7 @@ class _OTPScreenState extends State<OTPScreen> {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => HomeScreen(),
+              builder: (context) => RegistrationScreen(),
             ),
             (Route<dynamic> route) => false);
       } else {

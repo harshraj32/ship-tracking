@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:truck/services/auth_services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 class HomeScreen extends StatefulWidget {
   static const routeName = '/homeScreen';
   @override
@@ -54,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
         'Truck Number': _truckNo,
         'Tyres': _selectedTyres,
         'date': _date
+      }).then((value) {
+        showSnackBar();
       });
       // print("BuildContext:".context);
       // Scaffold.of(context).showSnackBar(SnackBar(
@@ -70,13 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _signOut() async {
     _firebaseAuth == null ? print(2) : print(_firebaseAuth.currentUser());
-    await _firebaseAuth.signOut().whenComplete(() => Navigator.pushAndRemoveUntil(
+    await _firebaseAuth
+        .signOut()
+        .whenComplete(() => Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => LoginScreen(),
             ),
             (Route<dynamic> route) => false));
-     
   }
 
   @override
@@ -89,6 +93,20 @@ class _HomeScreenState extends State<HomeScreen> {
           DropdownButton(
               icon: Icon(Icons.more_vert),
               items: [
+                DropdownMenuItem(
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.person),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text("Profile"),
+                      ],
+                    ),
+                  ),
+                  value: 'profile',
+                ),
                 DropdownMenuItem(
                   child: Container(
                     child: Row(
@@ -108,6 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (itemIdentifier == 'logout') {
                   // AuthService().signOut();
                   _signOut();
+                }
+                if(itemIdentifier == 'profile'){
+                  Navigator.of(context).pushNamed('/profileScreen');
                 }
               }),
         ],
@@ -175,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Center(
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 12),
-                  padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6),
                   // padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25.0),
@@ -189,7 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     hint: Text('Select tyres'),
                     value: _selectedTyres,
                     isExpanded: true,
-                     
                     onChanged: (newValue) {
                       setState(() {
                         _selectedTyres = newValue;
@@ -223,16 +243,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold),
                       ),
-                       onPressed: () {
-                      _trySubmit();
-                      showSnackBar();
-                    
-                    },
-                    padding: EdgeInsets.all(16.0),
+                      onPressed: () {
+                        _trySubmit();
+                      },
+                      padding: EdgeInsets.all(16.0),
                     ),
-                   
                   ),
                 ),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/registrationScreen");
+                },
+                child: Text("Registration Form"),
               ),
             ]),
           ),
@@ -240,16 +263,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-    void showSnackBar() {
+
+  void showSnackBar() {
     final snackBarContent = SnackBar(
       content: Text("vechile details successfully added"),
-      action: SnackBarAction(
-          label: 'UNDO', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+      backgroundColor: Colors.green,
+      // action: SnackBarAction(
+      //   textColor: Colors.black,
+      //     label: 'Hide',
+      //     onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
     );
     _scaffoldkey.currentState.showSnackBar(snackBarContent);
   }
-
-
-
-
 }
