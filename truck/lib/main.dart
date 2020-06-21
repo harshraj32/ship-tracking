@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truck/screens/homeScreen.dart';
+import 'package:truck/screens/registration_screen.dart';
 import 'package:truck/services/auth_services.dart';
 import './screens/loginScreen.dart';
 
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
       home: screen(),
       routes: {
         HomeScreen.routeName: (ctx) => HomeScreen(),
+        RegistrationScreen.routeName: (ctx) => RegistrationScreen(),
       },
     );
   }
