@@ -251,12 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/registrationScreen");
-                },
-                child: Text("Registration Form"),
-              ),
+              // FlatButton(
+              //   onPressed: () {
+              //     Navigator.of(context).pushNamed("/registrationScreen");
+              //   },
+              //   child: Text("Registration Form"),
+              // ),
             ]),
           ),
         ),
