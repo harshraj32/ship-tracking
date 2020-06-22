@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:truck/screens/homeScreen.dart';
 
 // import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/otpInput.dart';
@@ -21,7 +23,6 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   /// Control the input text field.
   TextEditingController _pinEditingController = TextEditingController();
 
@@ -40,8 +41,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("isValid - $isCodeSent");
-    print("mobile ${widget.mobileNumber}");
+    // print("isValid - $isCodeSent");
+    // print("mobile ${widget.mobileNumber}");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -153,6 +154,8 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerifyCode() async {
+    print('verifying code');
+    // var cuser=await _firebaseAuth.currentUser();
     setState(() {
       isCodeSent = true;
     });
@@ -161,18 +164,23 @@ class _OTPScreenState extends State<OTPScreen> {
         (AuthCredential phoneAuthCredential) {
       _firebaseAuth
           .signInWithCredential(phoneAuthCredential)
-          .then((AuthResult value) {
+          .then((AuthResult value)async {
         if (value.user != null) {
           // Handle loogged in state
-          print(value.user.phoneNumber);
+        var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
+         print(inst.documents.length.toString()+" length");
+         if(inst.documents.length==0){
           Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RegistrationScreen(
-                    // user: value.user,
-                    ),
-              ),
-              (Route<dynamic> route) => false);
+            context,
+            MaterialPageRoute(
+              builder: (context) => RegistrationScreen(),
+            ),
+            (Route<dynamic> route) => false);
+       }
+       else{
+         
+         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+       }
         } else {
           showToast("Error validating OTP, try again", Colors.red);
         }
@@ -216,21 +224,31 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onFormSubmitted() async {
+    print('on form submit');
     AuthCredential _authCredential = PhoneAuthProvider.getCredential(
         verificationId: _verificationId, smsCode: _pinEditingController.text);
-
     _firebaseAuth
         .signInWithCredential(_authCredential)
-        .then((AuthResult value) {
+        .then((AuthResult value) async{
       if (value.user != null) {
-        // Handle loogged in state
-        print(value.user.phoneNumber);
-        Navigator.pushAndRemoveUntil(
+        // print(value.user.phoneNumber);
+       var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
+         print(inst.documents.length.toString()+" length");
+         if(inst.documents.length==0){
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => RegistrationScreen(),
             ),
             (Route<dynamic> route) => false);
+       }
+       else{
+         
+         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+       }
+      
+       
+       
       } else {
         showToast("Error validating OTP, try again", Colors.red);
       }

@@ -5,6 +5,7 @@ import 'package:truck/screens/profile_screen.dart';
 import 'package:truck/screens/registration_screen.dart';
 import 'package:truck/services/auth_services.dart';
 import './screens/loginScreen.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -13,30 +14,32 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
   // This widget is the root of your application.
   Widget screen() {
     return StreamBuilder(
-      
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      builder: (BuildContext context, snapshot) {
-        switch(snapshot.connectionState){
-          case(ConnectionState.active):
-          case(ConnectionState.done):
-        if (snapshot.hasData) {
-          if (snapshot.data.providerData.length == 1) {
-            // logged in using email and password
-            return snapshot.data.isEmailVerified ? HomeScreen() : LoginScreen();
-          } else {
-            // logged in using other providers
-            return HomeScreen();
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (BuildContext context, snapshot) {
+          switch (snapshot.connectionState) {
+            case (ConnectionState.active):
+            case (ConnectionState.done):
+              if (snapshot.hasData) {
+                if (snapshot.data.providerData.length == 1) {
+                  // logged in using email and password
+                  return snapshot.data.isEmailVerified
+                      ? HomeScreen()
+                      : LoginScreen();
+                } else {
+                  // logged in using other providers
+                  return HomeScreen();
+                }
+              } else {
+                return LoginScreen();
+              }
+              break;
+            case (ConnectionState.waiting):
+              return Scaffold(
+                  body: Center(
+                child: CircularProgressIndicator(),
+              ));
           }
-        } else {
-          return LoginScreen();
-        }
-       break ;
-        case(ConnectionState.waiting): 
-        return Scaffold(
-          body: Center(child: CircularProgressIndicator(),)
-        );
-    }}
-    );
+        });
   }
 
   @override
