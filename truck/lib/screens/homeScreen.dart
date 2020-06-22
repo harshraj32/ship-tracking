@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldkey,
       appBar: AppBar(
-        title: Text("Home"),
+        title: Text("Register Truck"),
         actions: [
           DropdownButton(
               icon: Icon(Icons.more_vert),
