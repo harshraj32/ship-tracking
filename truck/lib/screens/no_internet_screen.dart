@@ -11,7 +11,7 @@ class NoInternetScreen extends StatelessWidget {
             SizedBox(
               height: 25,
             ),
-            Image.asset('assets/images/no_internet.png'),
+            Container(child: Image.asset('assets/images/no_internet.png')),
             Text(
               'Uh No!',
               style: TextStyle(

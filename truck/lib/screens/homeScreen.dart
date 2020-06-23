@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String uid;
   List<String> _tyresDD = ['Select tyres', '10', '12', '18'];
   String _selectedTyres;
-  var connectionStatus=false;
+  var connectionStatus=true;
   // String dropdownValue = 'Select Tyres';
 
   void checkConnectivitySubscription() async {
@@ -325,12 +325,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/cc");
-                },
-                child: Text("Connection Check"),
-              ),
+              // FlatButton(
+              //   onPressed: () {
+              //     Navigator.of(context).pushNamed("/cc");
+              //   },
+              //   child: Text("Connection Check"),
+              // ),
             ]),
           ),
         ),
