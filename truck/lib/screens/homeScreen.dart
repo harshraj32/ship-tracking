@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:truck/screens/no_internet_screen.dart';
 import 'package:truck/services/connection_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,22 +33,31 @@ class _HomeScreenState extends State<HomeScreen> {
   String uid;
   List<String> _tyresDD = ['Select tyres', '10', '12', '18'];
   String _selectedTyres;
+  var connectionStatus=false;
   // String dropdownValue = 'Select Tyres';
 
   void checkConnectivitySubscription() async {
     _streamSubscription =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       var conn = InternetConnectionService.getConnectionValue(result);
+      var route=ModalRoute.of(context).settings.name;
+      print(route);
       switch (conn) {
         case 'None':
-          Navigator.of(context).pushNamed('/cc');
-          break;
+        setState(() {
+          connectionStatus=false;
+        });
+        break;
         case 'Mobile':
-          // Navigator.popUntil(context, ModalRoute.withName('/homeScreen'));
-          break;
+       setState(() {
+          connectionStatus=true;
+        });
+        break;
         case 'Wi-Fi':
-          // Navigator.popUntil(context, ModalRoute.withName('/homeScreen'));
-          break;
+          setState(() {
+          connectionStatus=true;
+        });
+        break;
       }
     });
   }
@@ -119,9 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    print('connection status:- '+connectionStatus.toString());
+    return !connectionStatus?Scaffold(
+      body: NoInternetScreen(),
+    ) :Scaffold(
       key: _scaffoldkey,
-      appBar: AppBar(
+      appBar:AppBar(
         title: Text("Register Truck"),
         actions: [
           DropdownButton(
@@ -167,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
         ],
       ),
-      body: SingleChildScrollView(
+      body:!connectionStatus?NoInternetScreen():SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.all(10),
           child: Form(
