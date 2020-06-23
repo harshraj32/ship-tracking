@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/no_internet_screen.dart';
+import 'package:truck/screens/orders_screen.dart';
 import 'package:truck/screens/profile_screen.dart';
 import 'package:truck/screens/registration_screen.dart';
 import './screens/loginScreen.dart';
+import './screens/checkStatusScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -68,6 +69,8 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         RegistrationScreen.routeName: (ctx) => RegistrationScreen(),
         ProfileScreen.routeName: (ctx) => ProfileScreen(),
         NoInternetScreen.routeName: (ctx) => NoInternetScreen(),
+        CheckStatus.route: (ctx) => CheckStatus(),
+        OrdersScreen.routeName: (ctx) => OrdersScreen(),
       },
     );
   }

@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                         child: StreamBuilder(
                             stream: Firestore.instance
-                                .collection('/users/${uid}/profile')
+                                .collection('users/${uid}/profile')
                                 .snapshots(),
                             builder: (ctx, snapshot) {
                               if (snapshot.connectionState ==
