@@ -40,8 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _streamSubscription =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       var conn = InternetConnectionService.getConnectionValue(result);
-      var route=ModalRoute.of(context).settings.name;
-      print(route);
       switch (conn) {
         case 'None':
         setState(() {
