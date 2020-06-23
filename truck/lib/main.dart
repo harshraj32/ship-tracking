@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/no_internet_screen.dart';
 import 'package:truck/screens/profile_screen.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      // home: screen(),
       home: screen(),
       routes: {
         HomeScreen.routeName: (ctx) => HomeScreen(),

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:truck/screens/no_internet_screen.dart';
@@ -92,14 +93,42 @@ class _HomeScreenState extends State<HomeScreen> {
       print(_truckNo.trim());
       print(_selectedTyres);
 
-      await Firestore.instance.collection('/users/${uid}/orders').add({
-        'Ship Number': _vehicleNo,
-        'Truck Number': _truckNo,
-        'Tyres': _selectedTyres,
-        'date': _date
-      }).then((value) {
-        showSnackBar();
-      });
+      // DocumentReference docRef = await Firestore.instance.collection('/users/${uid}/orders').add({
+      //   'Ship Number': _vehicleNo,
+      //   'Truck Number': _truckNo,
+      //   'Tyres': _selectedTyres,
+      //   'date': _date
+      // }).then((value ) {
+      //   showSnackBar();
+      //   print(value.key)
+      // });
+      final collRef = Firestore.instance.collection('/users/${uid}/orders');
+        DocumentReference docReference = collRef.document();
+        String status = "";
+        docReference.setData({
+            'Ship Number': _vehicleNo,
+            'Truck Number': _truckNo,
+            'Tyres': _selectedTyres,
+            'date': _date
+        }).then((doc) {
+          print('hop ${docReference.documentID}');
+          status = "success";
+          showSnackBar();
+         Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ConfirmationScreen(status:status)
+              ));
+        }).catchError((error) {
+          print(error);
+          status = "fail";
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ConfirmationScreen(status:status)
+              ));
+        });
+
       // print("BuildContext:".context);
       // Scaffold.of(context).showSnackBar(SnackBar(
       //   content: Text("vehicle:" +
