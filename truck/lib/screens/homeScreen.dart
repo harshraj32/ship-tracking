@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truck/screens/loginScreen.dart';
-import 'package:truck/services/auth_services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:truck/services/connection_service.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/homeScreen';
@@ -20,14 +23,39 @@ class _HomeScreenState extends State<HomeScreen> {
   var _truckNo = '';
   var _tyreCheckUp = false;
   var _tyres = 0;
+
+  StreamSubscription<ConnectivityResult> _streamSubscription;
+  Connectivity _connectivity = Connectivity();
+
+  String _networkConnection = '';
+
   String uid;
   List<String> _tyresDD = ['Select tyres', '10', '12', '18'];
   String _selectedTyres;
   // String dropdownValue = 'Select Tyres';
 
+  void checkConnectivitySubscription() async {
+    _streamSubscription =
+        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      var conn = InternetConnectionService.getConnectionValue(result);
+      switch (conn) {
+        case 'None':
+          Navigator.of(context).pushNamed('/cc');
+          break;
+        case 'Mobile':
+          // Navigator.popUntil(context, ModalRoute.withName('/homeScreen'));
+          break;
+        case 'Wi-Fi':
+          // Navigator.popUntil(context, ModalRoute.withName('/homeScreen'));
+          break;
+      }
+    });
+  }
+
   @override
   void initState() {
     this.uid = '';
+    checkConnectivitySubscription();
     FirebaseAuth.instance.currentUser().then((value) {
       setState(() {
         this.uid = value.uid;
@@ -37,6 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
       print(e);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _trySubmit() async {
@@ -127,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // AuthService().signOut();
                   _signOut();
                 }
-                if(itemIdentifier == 'profile'){
+                if (itemIdentifier == 'profile') {
                   Navigator.of(context).pushNamed('/profileScreen');
                 }
               }),
@@ -251,12 +285,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              // FlatButton(
-              //   onPressed: () {
-              //     Navigator.of(context).pushNamed("/registrationScreen");
-              //   },
-              //   child: Text("Registration Form"),
-              // ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/cc");
+                },
+                child: Text("Connection Check"),
+              ),
             ]),
           ),
         ),

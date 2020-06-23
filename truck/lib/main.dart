@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/profile_screen.dart';
 import 'package:truck/screens/registration_screen.dart';
-import 'package:truck/services/auth_services.dart';
+import 'package:truck/services/connectivity_check.dart';
 import './screens/loginScreen.dart';
 
 void main() {
@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         HomeScreen.routeName: (ctx) => HomeScreen(),
         RegistrationScreen.routeName: (ctx) => RegistrationScreen(),
         ProfileScreen.routeName: (ctx) => ProfileScreen(),
+        ConnectionCheck.routeName: (ctx) => ConnectionCheck(),
       },
     );
   }
