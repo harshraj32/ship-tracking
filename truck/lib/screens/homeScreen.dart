@@ -325,12 +325,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/cc");
-                },
-                child: Text("Connection Check"),
-              ),
+              // FlatButton(
+              //   onPressed: () {
+              //     Navigator.of(context).pushNamed("/cc");
+              //   },
+              //   child: Text("Connection Check"),
+              // ),
             ]),
           ),
         ),
