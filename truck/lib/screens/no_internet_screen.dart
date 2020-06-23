@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NoInternetScreen extends StatelessWidget {
+  static const routeName = '/cc';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
