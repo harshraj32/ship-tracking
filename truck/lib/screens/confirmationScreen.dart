@@ -1,6 +1,7 @@
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:truck/screens/checkStatusScreen.dart';
 class ConfirmationScreen extends StatefulWidget {
   static const routeName = '/Confirmation';
   final String status;
@@ -50,7 +51,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               children: <Widget>[
                 ListTile(
                   title: Text("SR Number"),
-                  subtitle: Text("xjoandoianw"),
+                  subtitle: Text("126648630833"),
                 ),
                 Divider(),
                 ListTile(
@@ -80,7 +81,9 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).popAndPushNamed(CheckStatus.route);
+                },
                 padding: EdgeInsets.all(16.0),
               ),
             ),
