@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:truck/screens/checkStatusScreen.dart';
 
@@ -49,20 +50,43 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: Text('Orders'),
       ),
       body: StreamBuilder(
-          stream:
-              Firestore.instance.collection('/users/${uid}/orders').orderBy('date', descending: true).snapshots(),
+          stream: Firestore.instance
+              .collection('/users/${uid}/orders')
+              .orderBy('date', descending: true)
+              .snapshots(),
           builder: (context, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Text('Loading..'));
             }
             final document = userSnapshot.data.documents;
+            if (document.length == 0) {
+              return Center(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      SvgPicture.asset(
+                        'assets/images/collecting.svg',
+                        height: 200,
+                        width: 200,
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text('No Orders Found',
+                          style:
+                              TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[500])),
+                    ],
+                  ),
+                ),
+              );
+            }
             return ListView.builder(
                 itemCount: document.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: <Widget>[
                       InkWell(
-                        onTap: (){
+                        onTap: () {
                           Navigator.of(context).pushNamed(CheckStatus.route);
                         },
                         child: buildListTile(

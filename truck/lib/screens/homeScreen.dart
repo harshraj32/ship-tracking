@@ -146,7 +146,10 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text("Register Truck"),
               actions: [
                 DropdownButton(
-                    icon: Icon(Icons.more_vert, color: Theme.of(context).primaryIconTheme.color,),
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Theme.of(context).primaryIconTheme.color,
+                    ),
                     dropdownColor: Colors.orange,
                     items: [
                       DropdownMenuItem(
@@ -198,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         _signOut();
                       }
                       if (itemIdentifier == 'profile') {
-                        Navigator.of(context).pushNamed(ProfileScreen.routeName);
+                        Navigator.of(context)
+                            .pushNamed(ProfileScreen.routeName);
                       }
                       if (itemIdentifier == 'orders') {
                         Navigator.of(context).pushNamed(OrdersScreen.routeName);
