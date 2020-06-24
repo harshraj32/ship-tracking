@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:truck/screens/checkStatusScreen.dart';
 
 class OrdersScreen extends StatefulWidget {
   static const routeName = '/ordersScreen';
@@ -48,7 +49,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: Text('Orders'),
       ),
       body: StreamBuilder(
-          stream: Firestore.instance.collection('/users/${uid}/orders').snapshots(),
+          stream:
+              Firestore.instance.collection('/users/${uid}/orders').snapshots(),
           builder: (context, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Text('Loading..'));
@@ -57,17 +59,22 @@ class _OrdersScreenState extends State<OrdersScreen> {
             return ListView.builder(
                 itemCount: document.length,
                 itemBuilder: (context, index) {
-                 return Column(
-                   children: <Widget>[
-                     buildListTile(
-                        index + 1,
-                        document[index]['Truck Number'],
-                        document[index]['Tyres'],
-                        document[index]['date'],
+                  return Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: (){
+                          Navigator.of(context).pushNamed(CheckStatus.route);
+                        },
+                        child: buildListTile(
+                          index + 1,
+                          document[index]['Truck Number'],
+                          document[index]['Tyres'],
+                          document[index]['date'],
+                        ),
                       ),
                       Divider()
-                   ],
-                 );
+                    ],
+                  );
                   // Text('hai');
                 });
           }),
