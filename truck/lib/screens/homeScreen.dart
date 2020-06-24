@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _trySubmit() async {
     FocusScope.of(context).unfocus();
     final _isValid = _formKey.currentState.validate();
-    var _date = DateTime.now();
+    // var _date = DateTime.now();
 
     if (_isValid) {
       _formKey.currentState.save();
@@ -101,11 +101,11 @@ class _HomeScreenState extends State<HomeScreen> {
       docReference.setData({
         'Truck Number': _vehicleNo,
         'Tyres': _selectedTyres,
-        'date': _date
+        'date': Timestamp.now()
       }).then((doc) {
         print('hop ${docReference.documentID}');
         status = "success";
-        showSnackBar();
+        // showSnackBar();
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -146,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text("Register Truck"),
               actions: [
                 DropdownButton(
-                    icon: Icon(Icons.more_vert),
+                    icon: Icon(Icons.more_vert, color: Theme.of(context).primaryIconTheme.color,),
+                    dropdownColor: Colors.orange,
                     items: [
                       DropdownMenuItem(
                         child: Container(
