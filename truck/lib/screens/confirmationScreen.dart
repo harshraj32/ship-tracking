@@ -17,7 +17,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   String animationName = "Build";
 
   void popConfirmScreenTimer() {
-    Timer _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    Timer _timer = Timer.periodic(Duration(seconds: 3), (timer) {
       Navigator.of(context).pop();
       timer.cancel();
     });

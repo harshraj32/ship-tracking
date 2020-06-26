@@ -9,6 +9,10 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="truck"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+              android:value="AIzaSyAx1w469aSv5bKV8u0YJg3M_Lt-grDkEgo"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

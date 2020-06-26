@@ -73,8 +73,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         height: 15,
                       ),
                       Text('No Orders Found',
-                          style:
-                              TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[500])),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red[500])),
                     ],
                   ),
                 ),
@@ -83,11 +85,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
             return ListView.builder(
                 itemCount: document.length,
                 itemBuilder: (context, index) {
+                  print("doc ID:" + userSnapshot.toString());
+                  DocumentSnapshot singleDoc = document[index];
+                  print(singleDoc.documentID);
                   return Column(
                     children: <Widget>[
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pushNamed(CheckStatus.route);
+                          Navigator.of(context).pushNamed(CheckStatus.route,arguments:{'docId':singleDoc.documentID}
+                           );
                         },
                         child: buildListTile(
                           index + 1,
