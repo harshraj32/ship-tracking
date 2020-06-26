@@ -47,9 +47,6 @@ class _CheckStatusState extends State<CheckStatus> {
     super.initState();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     Map<String, Object> docId = ModalRoute.of(context).settings.arguments;
@@ -102,7 +99,6 @@ class _CheckStatusState extends State<CheckStatus> {
                   return Marker(
                   markerId: MarkerId('rakesh'),
                   position: e,
-                  icon: pinLocationIcon2
                 );
                 }
                
