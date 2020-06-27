@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,11 +26,20 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   final Firestore _auth = Firestore.instance;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
   final _formKey = GlobalKey<FormState>();
   var _vehicleNo = '';
   var _truckNo = '';
   var _tyreCheckUp = false;
   var _tyres = 0;
+
+  _getToken() {
+    firebaseMessaging.getToken().then((token) {
+      print("Device Token: $token");
+    });
+}
 
   StreamSubscription<ConnectivityResult> _streamSubscription;
   Connectivity _connectivity = Connectivity();
@@ -67,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     this.uid = '';
     checkConnectivitySubscription();
+    
+    
     FirebaseAuth.instance.currentUser().then((value) {
       setState(() {
         this.uid = value.uid;
@@ -75,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }).catchError((e) {
       print(e);
     });
+    registerNotification();
     super.initState();
   }
 
@@ -132,6 +148,50 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             (Route<dynamic> route) => false));
   }
+
+  void registerNotification() {
+    firebaseMessaging.requestNotificationPermissions();
+
+    firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+      print('onMessage: $message');
+      showNotification(message['notification']);
+      return;
+    }, onResume: (Map<String, dynamic> message) {
+      print('onResume: $message');
+      return;
+    }, onLaunch: (Map<String, dynamic> message) {
+      print('onLaunch: $message');
+      return;
+    });
+
+    firebaseMessaging.getToken().then((token) async{
+      print('token: $token');
+       var uinstance =
+          await Firestore.instance.collection('/users/${uid}/profile');
+
+      var ref = await uinstance.getDocuments();
+      await uinstance.document(ref.documents[0].documentID).updateData({'pushToken': token});
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: err.message.toString());
+    });
+  }
+   void showNotification(message) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'channel_ID', 'channel name', 'channel description',
+      playSound: true,
+      enableVibration: true,
+      importance: Importance.Max, 
+      priority: Priority.High,
+    );
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics,
+        payload: json.encode(message));
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
