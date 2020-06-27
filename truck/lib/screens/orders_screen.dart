@@ -63,6 +63,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               return Center(
                 child: Container(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SvgPicture.asset(
                         'assets/images/collecting.svg',

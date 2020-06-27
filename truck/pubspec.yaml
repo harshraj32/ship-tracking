@@ -40,6 +40,9 @@ dependencies:
   flare_flutter:
   google_maps_flutter: ^0.5.28+1
   flutter_local_notifications: ^1.4.4+1
+  flutter_polyline_points: ^0.2.1
+  google_map_polyline: 
+  permission: 
   
 dev_dependencies:
   flutter_test:
