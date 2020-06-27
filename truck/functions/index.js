@@ -9,24 +9,25 @@ var newData;
  
 exports.sendNotification = functions.firestore.document('users/{userId}/orders/{orderId}').onUpdate(async (snapshot, context) => {
    
- 
+    
     if (snapshot.empty) {
         console.log('No Devices');
         return;
     }
  
     newData = snapshot.after.data();
+    const userId = context.params.userId;
  
     const deviceIdTokens = await admin
         .firestore()
-        .collection('users/{userId}/profile')
+        .collection('users').doc(userId).collection('profile')
         .get();
  
-    var tokens = ['feXhTOQcLjk:APA91bEaOGPJ27WPAlqknWXg-OxDzTn7qtwNhb_E-hb5SJn9E0a5-xyPQaFKC5qrF-PZtajEHXZnfkRx8MKfSUUSQsjyyZB4u_TtTc8iQDxP8rRsn7pLkknfF2SQZTUmP8dsX5wXh-1D'];
+    var tokens = [];
  
-    // for (var token of deviceIdTokens.docs) {
-    //     tokens.push(token.data().pushToken);
-    // }
+    for (var token of deviceIdTokens.docs) {
+        tokens.push(token.data().pushToken);
+    }
     var payload = {
         notification: {
             title: 'Your SR Number',
