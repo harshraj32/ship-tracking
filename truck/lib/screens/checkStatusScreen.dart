@@ -29,13 +29,12 @@ class _CheckStatusState extends State<CheckStatus> {
   @override
   void didChangeDependencies() {
     _getPolyline();
-    
+
     super.didChangeDependencies();
   }
 
-  void _onMapCreated(GoogleMapController controller)async  {
+  void _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
-    
   }
 
   _addPolyLine() {
@@ -105,10 +104,10 @@ class _CheckStatusState extends State<CheckStatus> {
             num.parse(latlng1[latlng1.length - 1].longitude.toStringAsFixed(5));
       });
     }
-    print(_originLatitude.toString()+" org lat");
-    print(_originLongitude.toString()+" org lon");
-    print(_destLatitude.toString()+" dest lat");
-    print(_destLongitude.toString()+" dest lon");
+    print(_originLatitude.toString() + " org lat");
+    print(_originLongitude.toString() + " org lon");
+    print(_destLatitude.toString() + " dest lat");
+    print(_destLongitude.toString() + " dest lon");
     Map<String, Object> docId = ModalRoute.of(context).settings.arguments;
     if (docId != null) {
       print("docID:" + docId['docId']);
@@ -123,7 +122,8 @@ class _CheckStatusState extends State<CheckStatus> {
               .document(uid)
               .collection('orders')
               .document(docId['docId'])
-              .collection('coordinates').orderBy('timestamp',descending: true)
+              .collection('coordinates')
+              .orderBy('timestamp')
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -135,12 +135,12 @@ class _CheckStatusState extends State<CheckStatus> {
             print('Tracking docs: ' + doc.toString());
             var len = doc.length;
             List<LatLng> latlng = [];
-            
+
             for (int i = 0; i < doc.length; i++) {
               latlng.add(LatLng(
                   double.parse(doc[i]['lat']), double.parse(doc[i]['lng'])));
             }
-            latlng1=latlng;
+            latlng1 = latlng;
             return len == 0
                 ? Center(
                     child: Text('ship is not assigned yet'),
@@ -166,17 +166,16 @@ class _CheckStatusState extends State<CheckStatus> {
                             icon: pinLocationIcon);
                       } else {
                         return Marker(
-                          markerId: MarkerId('rakesh'),
-                          position: e,
-                          icon: BitmapDescriptor.defaultMarkerWithHue(200)
-                        );
+                            markerId: MarkerId('rakesh'),
+                            position: e,
+                            icon: BitmapDescriptor.defaultMarkerWithHue(200));
                       }
                     }).toList()),
                     onMapCreated: _onMapCreated,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(double.parse(doc[len - 1]['lat']),
                           double.parse(doc[len - 1]['lng'])),
-                      zoom: 5.0,
+                      zoom: 8.0,
                     ),
                   );
           }),
