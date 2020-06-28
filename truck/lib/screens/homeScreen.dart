@@ -27,8 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   final Firestore _auth = Firestore.instance;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
+
   final _formKey = GlobalKey<FormState>();
   var _vehicleNo = '';
   var _truckNo = '';
@@ -80,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     this.uid = '';
     checkConnectivitySubscription();
+    configLocalNotification();
 
     FirebaseAuth.instance.currentUser().then((value) {
       setState(() {
@@ -146,6 +148,15 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context) => LoginScreen(),
             ),
             (Route<dynamic> route) => false));
+  }
+
+  void configLocalNotification() {
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void registerNotification() {
