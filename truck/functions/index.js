@@ -32,7 +32,7 @@ exports.sendNotification = functions.firestore.document('users/{userId}/orders/{
     var payload = {
         notification: {
             title: 'Your Truck Details',
-            body:  "truck no.:"+newData.TruckNumber+ "  "+"Sr no:"+newData.sr_no+"  "+"Tyres:"+newData.Tyres,
+            body:  "Truck No: "+newData.TruckNumber+ "  "+"Sr No: "+newData.sr_no+"  "+"Tyres: "+newData.Tyres,
             sound: 'default',
         },
         data: {
