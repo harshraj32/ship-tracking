@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   final Firestore _auth = Firestore.instance;
+  final _textController = TextEditingController();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
@@ -119,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'TruckNumber': _vehicleNo,
         'Tyres': _selectedTyres,
         'date': Timestamp.now(),
-        'sr_no':'',
+        'sr_no': '',
       }).then((doc) {
         print('hop ${docReference.documentID}');
         status = "success";
@@ -136,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(
                 builder: (context) => ConfirmationScreen(status: status)));
       });
+      _textController.clear();
     }
   }
 
@@ -291,11 +293,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       margin: EdgeInsets.all(10),
                       child: Form(
                         key: _formKey,
-                        child:
-                            Column(
-                               children: <
-                                Widget>[
-                                   SizedBox(
+                        child: Column(children: <Widget>[
+                          SizedBox(
                             height: 25,
                           ),
                           Container(
@@ -309,6 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: TextFormField(
+                              controller: _textController,
                               key: ValueKey('VehicleNo'),
                               decoration: InputDecoration(
                                 labelText: "Vehicle No",
@@ -426,18 +426,5 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
           );
-  }
-
-  void showSnackBar() {
-    final snackBarContent = SnackBar(
-      content: Text("vechile details successfully added"),
-      duration: Duration(seconds: 3),
-      backgroundColor: Colors.green,
-      // action: SnackBarAction(
-      //   textColor: Colors.black,
-      //     label: 'Hide',
-      //     onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
-    );
-    _scaffoldkey.currentState.showSnackBar(snackBarContent);
   }
 }
