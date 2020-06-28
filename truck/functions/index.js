@@ -28,10 +28,11 @@ exports.sendNotification = functions.firestore.document('users/{userId}/orders/{
     for (var token of deviceIdTokens.docs) {
         tokens.push(token.data().pushToken);
     }
+
     var payload = {
         notification: {
-            title: 'Your SR Number',
-            body: newData.Tyres,
+            title: 'Your Truck Details',
+            body:  "Truck No: "+newData.TruckNumber+ "  "+"Sr No: "+newData.sr_no+"  "+"Tyres: "+newData.Tyres,
             sound: 'default',
         },
         data: {

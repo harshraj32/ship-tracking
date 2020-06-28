@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
       DocumentReference docReference = collRef.document();
       String status = "";
       docReference.setData({
-        'Truck Number': _vehicleNo,
+        'TruckNumber': _vehicleNo,
         'Tyres': _selectedTyres,
         'date': Timestamp.now(),
         'sr_no':'',
