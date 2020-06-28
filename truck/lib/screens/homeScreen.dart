@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   final Firestore _auth = Firestore.instance;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
   final _formKey = GlobalKey<FormState>();
   var _vehicleNo = '';
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     firebaseMessaging.getToken().then((token) {
       print("Device Token: $token");
     });
-}
+  }
 
   StreamSubscription<ConnectivityResult> _streamSubscription;
   Connectivity _connectivity = Connectivity();
@@ -80,8 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     this.uid = '';
     checkConnectivitySubscription();
-    
-    
+
     FirebaseAuth.instance.currentUser().then((value) {
       setState(() {
         this.uid = value.uid;
@@ -164,34 +163,37 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     });
 
-    firebaseMessaging.getToken().then((token) async{
+    firebaseMessaging.getToken().then((token) async {
       print('token: $token');
-       var uinstance =
+      var uinstance =
           await Firestore.instance.collection('/users/${uid}/profile');
 
       var ref = await uinstance.getDocuments();
-      await uinstance.document(ref.documents[0].documentID).updateData({'pushToken': token});
+      await uinstance
+          .document(ref.documents[0].documentID)
+          .updateData({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
     });
   }
-   void showNotification(message) async {
+
+  void showNotification(message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'channel_ID', 'channel name', 'channel description',
+      'channel_ID',
+      'channel name',
+      'channel description',
       playSound: true,
       enableVibration: true,
-      importance: Importance.Max, 
+      importance: Importance.Max,
       priority: Priority.High,
     );
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    var platformChannelSpecifics =
-        new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, message['title'].toString(), message['body'].toString(), platformChannelSpecifics,
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
+        message['body'].toString(), platformChannelSpecifics,
         payload: json.encode(message));
   }
-
-  
 
   @override
   Widget build(BuildContext context) {

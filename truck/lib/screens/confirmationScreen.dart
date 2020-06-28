@@ -16,11 +16,6 @@ class ConfirmationScreen extends StatefulWidget {
 
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   String animationName = "Build";
- 
-
- 
-
- 
 
   void popConfirmScreenTimer() {
     Timer _timer = Timer.periodic(Duration(seconds: 3), (timer) {
@@ -36,9 +31,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
    
   }
 
- 
-
-  
   @override
   Widget build(BuildContext context) {
     print("entering conformation screen");
