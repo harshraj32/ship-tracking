@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -25,11 +27,12 @@ class _CheckStatusState extends State<CheckStatus> {
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
   String googleAPIKey = "AIzaSyAx1w469aSv5bKV8u0YJg3M_Lt-grDkEgo";
-
+  int oldlen = 0;
   @override
-  void didChangeDependencies() {
-    _getPolyline();
+  void didChangeDependencies() async {
+    print("changes made");
 
+    _getPolyline();
     super.didChangeDependencies();
   }
 
@@ -86,8 +89,22 @@ class _CheckStatusState extends State<CheckStatus> {
         .then((onValue) {
       pinLocationIcon = onValue;
     });
+    // BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.6),
+    //         'assets/images/red_dot.png')
+    //     .then((onValue1) {
+    //   pinLocationIcon2= onValue1;
+    // }).;
 
     super.initState();
+  }
+
+ 
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
   }
 
   @override
@@ -134,6 +151,10 @@ class _CheckStatusState extends State<CheckStatus> {
             var doc = snapshot.data.documents;
             print('Tracking docs: ' + doc.toString());
             var len = doc.length;
+            if (len > oldlen) {
+              _getPolyline();
+            }
+            oldlen = len;
             List<LatLng> latlng = [];
 
             for (int i = 0; i < doc.length; i++) {
@@ -161,9 +182,10 @@ class _CheckStatusState extends State<CheckStatus> {
                       } else if (latlng[len - 1].latitude == e.latitude &&
                           latlng[len - 1].longitude == e.longitude) {
                         return Marker(
-                            markerId: MarkerId('rakesh'),
-                            position: e,
-                            icon: pinLocationIcon);
+                          markerId: MarkerId('rakesh'),
+                          position: e,
+                          icon: pinLocationIcon,
+                        );
                       } else {
                         return Marker(
                             markerId: MarkerId('rakesh'),

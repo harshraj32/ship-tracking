@@ -30,11 +30,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.initState();
   }
 
-  Widget buildListTile(index, title, s1, s2) {
+  Widget buildListTile(index,sr_status, title, s1, s2) {
     return ListTile(
       leading: CircleAvatar(
+        backgroundColor: sr_status!=''?Colors.greenAccent:Colors.redAccent,
         radius: 23,
-        child: Text(index.toString()),
+        child: Text(index.toString(),style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700
+        ),),
       ),
       title: Text(title),
       subtitle: Text('Tyres: ' + s1),
@@ -89,6 +93,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   print("doc ID:" + userSnapshot.toString());
                   DocumentSnapshot singleDoc = document[index];
                   print(singleDoc.documentID);
+                  var sr_status=document[index]['sr_no'];
                   return Column(
                     children: <Widget>[
                       InkWell(
@@ -98,6 +103,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         },
                         child: buildListTile(
                           index + 1,
+                          sr_status,
                           document[index]['Truck Number'],
                           document[index]['Tyres'],
                           document[index]['date'],
