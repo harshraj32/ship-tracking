@@ -104,7 +104,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         child: buildListTile(
                           index + 1,
                           sr_status,
-                          document[index]['Truck Number'],
+                          document[index]['TruckNumber'],
                           document[index]['Tyres'],
                           document[index]['date'],
                         ),
