@@ -118,7 +118,8 @@ class _HomeScreenState extends State<HomeScreen> {
       docReference.setData({
         'Truck Number': _vehicleNo,
         'Tyres': _selectedTyres,
-        'date': Timestamp.now()
+        'date': Timestamp.now(),
+        'sr_no':'',
       }).then((doc) {
         print('hop ${docReference.documentID}');
         status = "success";
@@ -216,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : Scaffold(
             key: _scaffoldkey,
             appBar: AppBar(
-              title: Text("Register Truck"),
+              title: Text("Registration"),
               actions: [
                 DropdownButton(
                     icon: Icon(
@@ -291,16 +292,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Form(
                         key: _formKey,
                         child:
-                            Column(mainAxisSize: MainAxisSize.min, children: <
+                            Column(
+                               children: <
                                 Widget>[
+                                   SizedBox(
+                            height: 25,
+                          ),
                           Container(
-                            child:
-                                SvgPicture.asset('assets/images/booking.svg'),
-                            width: 300,
-                            height: 300,
+                            child: SvgPicture.asset('assets/images/pic2.svg'),
+                            width: 250,
+                            height: 250,
                           ),
                           SizedBox(
-                            height: 15,
+                            height: 25,
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
