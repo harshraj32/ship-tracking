@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +16,9 @@ import 'package:truck/screens/no_internet_screen.dart';
 import 'package:truck/screens/orders_screen.dart';
 import 'package:truck/screens/profile_screen.dart';
 import 'package:truck/services/connection_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/homeScreen';
@@ -36,6 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
   var _truckNo = '';
   var _tyreCheckUp = false;
   var _tyres = 0;
+  var downloadUrl1;
+
+  ProgressDialog pr;
 
   _getToken() {
     firebaseMessaging.getToken().then((token) {
@@ -50,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String uid;
   List<String> _tyresDD = ['Select tyres', '10', '12', '18'];
-  String _selectedTyres;
+  String _selectedTyres = 'Select tyres';
   var connectionStatus = true;
   // String dropdownValue = 'Select Tyres';
 
@@ -109,9 +116,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_isValid) {
       _formKey.currentState.save();
-      print(_vehicleNo.trim());
-      print(_truckNo.trim());
       print(_selectedTyres);
+      // print(dou);
+      if (_selectedTyres == 'Select tyres' && downloadUrl1 == null) {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                elevation: 5,
+                insetPadding: EdgeInsets.all(15),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                title: Text('Uh No!'),
+                content: Text('Enter required details to continue'),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Text('OKAY'))
+                ],
+              );
+            });
+        return;
+      }
 
       final collRef = Firestore.instance.collection('/users/${uid}/orders');
       DocumentReference docReference = collRef.document();
@@ -120,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'TruckNumber': _vehicleNo,
         'Tyres': _selectedTyres,
         'date': Timestamp.now(),
+        'image_url': downloadUrl1,
         'sr_no': '',
       }).then((doc) {
         print('hop ${docReference.documentID}');
@@ -138,6 +168,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) => ConfirmationScreen(status: status)));
       });
       _textController.clear();
+      downloadUrl1 = '';
+      setState(() {
+        _selectedTyres = 'Select tyres';
+      });
     }
   }
 
@@ -209,8 +243,50 @@ class _HomeScreenState extends State<HomeScreen> {
         payload: json.encode(message));
   }
 
+  //camera module
+  StorageReference storageReference = FirebaseStorage.instance.ref();
+
+  Future<void> _takePicture() async {
+    var _imageFile = await ImagePicker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+    );
+
+    String fileName = path.basename(_imageFile.path);
+
+    StorageReference ref = storageReference.child("/truck_images");
+    StorageUploadTask storageUploadTask =
+        ref.child(fileName).putFile(_imageFile);
+    if (storageUploadTask.isSuccessful || storageUploadTask.isComplete) {
+      final String url = await ref.getDownloadURL();
+      print("The download URL is " + url);
+    } else if (storageUploadTask.isInProgress) {
+      pr.show();
+      storageUploadTask.events.listen((event) {
+        double percentage = 100 *
+            (event.snapshot.bytesTransferred.toDouble() /
+                event.snapshot.totalByteCount.toDouble());
+        if (percentage == 100.0) {
+          pr.hide();
+        }
+        print("THe percentage " + percentage.toString());
+      });
+
+      StorageTaskSnapshot storageTaskSnapshot =
+          await storageUploadTask.onComplete;
+      downloadUrl1 = await storageTaskSnapshot.ref.getDownloadURL();
+      // FirebaseData.uploadImage(downloadUrl1, DateTime.now().toString(), userId);
+      //Here you can get the download URL when the task has been completed.
+      print("Download URL " + downloadUrl1.toString());
+    } else {
+      //Catch any cases here that might come up like canceled, interrupted
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context, isDismissible: false);
+
     print('connection status:- ' + connectionStatus.toString());
     return !connectionStatus
         ? Scaffold(
@@ -329,29 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.all(12.0),
-                          //   child: TextFormField(
-                          //     key: ValueKey('TruckNo'),
-                          //     decoration: InputDecoration(
-                          //       labelText: "Truck No",
-                          //       fillColor: Colors.white,
-                          //       border: new OutlineInputBorder(
-                          //         borderRadius: new BorderRadius.circular(25.0),
-                          //         borderSide: new BorderSide(),
-                          //       ),
-                          //     ),
-                          //     onSaved: (value) {
-                          //       _truckNo = value;
-                          //     },
-                          //     validator: (value) {
-                          //       if (value.isEmpty) {
-                          //         return "Truck Number cann\'t be empty";
-                          //       }
-                          //       return null;
-                          //     },
-                          //   ),
-                          // ),
+
                           SizedBox(
                             height: 20,
                           ),
@@ -387,6 +441,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
+                          SizedBox(
+                            height: 12,
+                          ),
+                          FlatButton(
+                              onPressed: _takePicture,
+                              child: Text('Take a picture of truck')),
                           SizedBox(
                             height: 12,
                           ),

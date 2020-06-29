@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truck/screens/homeScreen.dart';
+import 'package:truck/screens/image_preview_screen.dart';
 import 'package:truck/screens/no_internet_screen.dart';
 import 'package:truck/screens/orders_screen.dart';
 import 'package:truck/screens/profile_screen.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         NoInternetScreen.routeName: (ctx) => NoInternetScreen(),
         CheckStatus.route: (ctx) => CheckStatus(),
         OrdersScreen.routeName: (ctx) => OrdersScreen(),
+        ImagePreviewScreen.routeName: (ctx) => ImagePreviewScreen(),
       },
     );
   }

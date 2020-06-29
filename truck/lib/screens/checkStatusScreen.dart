@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:truck/screens/image_preview_screen.dart';
 
 class CheckStatus extends StatefulWidget {
   static const route = '/checkstatus';
@@ -98,8 +97,6 @@ class _CheckStatusState extends State<CheckStatus> {
     super.initState();
   }
 
- 
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -128,79 +125,92 @@ class _CheckStatusState extends State<CheckStatus> {
     Map<String, Object> docId = ModalRoute.of(context).settings.arguments;
     if (docId != null) {
       print("docID:" + docId['docId']);
+      print("image_url:" + docId['image_url']);
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Tracking'),
+        actions: <Widget>[
+          FlatButton(
+            textColor: Theme.of(context).primaryIconTheme.color,
+            child: Text('View Image'),
+            onPressed: () {
+              Navigator.of(context).pushNamed(ImagePreviewScreen.routeName,
+                  arguments: docId['image_url']);
+            },
+          )
+        ],
       ),
       body: StreamBuilder(
-          stream: Firestore.instance
-              .collection('users')
-              .document(uid)
-              .collection('orders')
-              .document(docId['docId'])
-              .collection('coordinates')
-              .orderBy('timestamp')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            var doc = snapshot.data.documents;
-            print('Tracking docs: ' + doc.toString());
-            var len = doc.length;
-            if (len > oldlen) {
-              _getPolyline();
-            }
-            oldlen = len;
-            List<LatLng> latlng = [];
+        stream: Firestore.instance
+            .collection('users')
+            .document(uid)
+            .collection('orders')
+            .document(docId['docId'])
+            .collection('coordinates')
+            .orderBy('timestamp')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          var doc = snapshot.data.documents;
+          print('Tracking docs: ' + doc.toString());
+          var len = doc.length;
+          if (len > oldlen) {
+            _getPolyline();
+          }
+          oldlen = len;
+          List<LatLng> latlng = [];
 
-            for (int i = 0; i < doc.length; i++) {
-              latlng.add(LatLng(
-                  double.parse(doc[i]['lat']), double.parse(doc[i]['lng'])));
-            }
-            latlng1 = latlng;
-            return len == 0
-                ? Center(
-                    child: Text('ship is not assigned yet'),
-                  )
-                : GoogleMap(
-                    polylines: Set<Polyline>.of(polylines.values),
-                    myLocationEnabled: true,
-                    compassEnabled: true,
-                    tiltGesturesEnabled: false,
-                    mapType: MapType.normal,
-                    markers: Set<Marker>.of(latlng.map((e) {
-                      if (latlng[0].latitude == e.latitude &&
-                          latlng[0].longitude == e.longitude) {
-                        return Marker(
+          for (int i = 0; i < doc.length; i++) {
+            latlng.add(LatLng(
+                double.parse(doc[i]['lat']), double.parse(doc[i]['lng'])));
+          }
+          latlng1 = latlng;
+          return len == 0
+              ? Center(
+                  child: Text('ship is not assigned yet'),
+                )
+              : GoogleMap(
+                  polylines: Set<Polyline>.of(polylines.values),
+                  myLocationEnabled: true,
+                  compassEnabled: true,
+                  tiltGesturesEnabled: false,
+                  mapType: MapType.normal,
+                  markers: Set<Marker>.of(latlng.map((e) {
+                    if (latlng[0].latitude == e.latitude &&
+                        latlng[0].longitude == e.longitude) {
+                      return Marker(
+                        markerId: MarkerId('rakesh'),
+                        position: e,
+                      );
+                    } else if (latlng[len - 1].latitude == e.latitude &&
+                        latlng[len - 1].longitude == e.longitude) {
+                      return Marker(
+                        markerId: MarkerId('rakesh'),
+                        position: e,
+                        icon: pinLocationIcon,
+                      );
+                    } else {
+                      return Marker(
                           markerId: MarkerId('rakesh'),
                           position: e,
-                        );
-                      } else if (latlng[len - 1].latitude == e.latitude &&
-                          latlng[len - 1].longitude == e.longitude) {
-                        return Marker(
-                          markerId: MarkerId('rakesh'),
-                          position: e,
-                          icon: pinLocationIcon,
-                        );
-                      } else {
-                        return Marker(
-                            markerId: MarkerId('rakesh'),
-                            position: e,
-                            icon: BitmapDescriptor.defaultMarkerWithHue(200));
-                      }
-                    }).toList()),
-                    onMapCreated: _onMapCreated,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(double.parse(doc[len - 1]['lat']),
-                          double.parse(doc[len - 1]['lng'])),
-                      zoom: 8.0,
-                    ),
-                  );
-          }),
+                          icon: BitmapDescriptor.defaultMarkerWithHue(200));
+                    }
+                  }).toList()),
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(double.parse(doc[len - 1]['lat']),
+                        double.parse(doc[len - 1]['lng'])),
+                    zoom: 8.0,
+                  ),
+                );
+        },
+      ),
     );
   }
 }

@@ -100,7 +100,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       InkWell(
                         onTap: () {
                           Navigator.of(context).pushNamed(CheckStatus.route,
-                              arguments: {'docId': singleDoc.documentID});
+                              arguments: {
+                                'docId': singleDoc.documentID,
+                                'image_url': document[index]['image_url']
+                              });
                         },
                         child: buildListTile(
                           index + 1,
