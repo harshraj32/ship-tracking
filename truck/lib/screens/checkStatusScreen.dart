@@ -27,6 +27,8 @@ class _CheckStatusState extends State<CheckStatus> {
   PolylinePoints polylinePoints = PolylinePoints();
   String googleAPIKey = "AIzaSyAx1w469aSv5bKV8u0YJg3M_Lt-grDkEgo";
   int oldlen = 0;
+
+  var dataOrder;
   @override
   void didChangeDependencies() async {
     print("changes made");
@@ -83,6 +85,8 @@ class _CheckStatusState extends State<CheckStatus> {
       print(e);
     });
 
+    // Firestore.instance.collection('')
+
     BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5),
             'assets/images/ship_marker_small_96.png')
         .then((onValue) {
@@ -123,6 +127,9 @@ class _CheckStatusState extends State<CheckStatus> {
     print(_destLatitude.toString() + " dest lat");
     print(_destLongitude.toString() + " dest lon");
     Map<String, Object> docId = ModalRoute.of(context).settings.arguments;
+    dataOrder = docId['data'];
+    print('dataOrder: ');
+    print(dataOrder);
     if (docId != null) {
       print("docID:" + docId['docId']);
       print("image_url:" + docId['image_url']);
@@ -131,17 +138,106 @@ class _CheckStatusState extends State<CheckStatus> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tracking'),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Theme.of(context).primaryIconTheme.color,
-            child: Text('View Image'),
-            onPressed: () {
-              Navigator.of(context).pushNamed(ImagePreviewScreen.routeName,
-                  arguments: docId['image_url']);
-            },
-          )
-        ],
       ),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.orangeAccent,
+          child: Icon(Icons.dashboard),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (ctx) {
+                  return Dialog(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 2.5 / 3,
+                      height: MediaQuery.of(context).size.height * 2.5 / 5,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            Card(
+                              // margin: EdgeInsets.only(top: 5),
+                              child:
+                              Container(
+                                 height: 200,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image:NetworkImage(docId['image_url']) ,
+                                    fit: BoxFit.fill,
+                                  )
+                                ) ,
+                              )
+                              
+                              //  Image.network(
+                              //   docId['image_url'],
+                              //   height: 200,
+                              //   width: double.infinity,
+                              //   fit: BoxFit.fill,
+                              // ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Container(
+                                  // width:double.infinity/2 ,
+                                  width: MediaQuery.of(context).size.width *
+                                      2.5 /
+                                      6,
+                                  child: ListTile(
+                                    title: Text(
+                                      dataOrder['TruckNumber'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: Text(
+                                      'Truck Number',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                                Divider(),
+                                Expanded(
+                                  child: Container(
+                                    child: ListTile(
+                                      title: Text(
+                                        dataOrder['Tyres'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: Text(
+                                        'Tyres',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                           
+                            Divider(),
+                            ListTile(
+                              title: Text(
+                                dataOrder['sr_no']==''?'not assigned yet':
+                                dataOrder['sr_no'],
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: Text(
+                                'Serial Number',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                });
+          }),
       body: StreamBuilder(
         stream: Firestore.instance
             .collection('users')

@@ -243,7 +243,6 @@ class _OTPScreenState extends State<OTPScreen> {
             (Route<dynamic> route) => false);
        }
        else{
-         
          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
        }
       
