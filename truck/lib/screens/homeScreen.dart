@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var _tyres = 0;
   var downloadUrl1;
 
+  var photoStatus = '';
   ProgressDialog pr;
 
   _getToken() {
@@ -170,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _textController.clear();
       downloadUrl1 = '';
       setState(() {
+        photoStatus='';
         _selectedTyres = 'Select tyres';
       });
     }
@@ -268,6 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 event.snapshot.totalByteCount.toDouble());
         if (percentage == 100.0) {
           pr.hide();
+          setState(() {
+            photoStatus = 'S';
+          });
         }
         print("THe percentage " + percentage.toString());
       });
@@ -279,6 +284,9 @@ class _HomeScreenState extends State<HomeScreen> {
       //Here you can get the download URL when the task has been completed.
       print("Download URL " + downloadUrl1.toString());
     } else {
+      setState(() {
+        photoStatus = 'F';
+      });
       //Catch any cases here that might come up like canceled, interrupted
     }
   }
@@ -444,9 +452,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(
                             height: 12,
                           ),
-                          FlatButton(
-                              onPressed: _takePicture,
-                              child: Text('Take a picture of truck')),
+                          photoStatus == ''
+                              ? FlatButton(
+                                  onPressed: _takePicture,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(Icons.camera_alt),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text('Take a picture of truck'),
+                                    ],
+                                  ))
+                              : (photoStatus == 'S'
+                                  ? Text(
+                                      'Photo Uploaded Successfully',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Photo Upload Failed',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    )),
                           SizedBox(
                             height: 12,
                           ),
