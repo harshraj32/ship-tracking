@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _textController.clear();
       downloadUrl1 = '';
       setState(() {
-        photoStatus='';
+        photoStatus = '';
         _selectedTyres = 'Select tyres';
       });
     }
@@ -254,7 +254,40 @@ class _HomeScreenState extends State<HomeScreen> {
       maxWidth: 600,
     );
 
-    String fileName = path.basename(_imageFile.path);
+    String fileName;
+    try {
+      fileName = path.basename(_imageFile.path);
+    } catch (error) {
+      print("exception: " + error.toString());
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.warning,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: 3,
+                  ),
+                  Text('Uh Nooo!'),
+                ],
+              ),
+              content:
+                  Text('Image selection cancelled, please select an Image'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text('OKAY'))
+              ],
+            );
+          });
+      return;
+    }
 
     StorageReference ref = storageReference.child("/truck_images");
     StorageUploadTask storageUploadTask =
@@ -284,12 +317,83 @@ class _HomeScreenState extends State<HomeScreen> {
       //Here you can get the download URL when the task has been completed.
       print("Download URL " + downloadUrl1.toString());
     } else {
+      print('exception occured');
       setState(() {
         photoStatus = 'F';
       });
       //Catch any cases here that might come up like canceled, interrupted
     }
   }
+
+  //pick from gallery
+  Future<void> _takePictureFromGallery() async {
+    var _imageFile = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+    );
+    String fileName;
+    try {
+      fileName = path.basename(_imageFile.path);
+    } catch (error) {
+      print("exception: " + error.toString());
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: Text('Uh Nooo!'),
+              content: Text(
+                  'Image selection cancelled or interupted, Select an Image'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text('OKAY'))
+              ],
+            );
+          });
+      return;
+    }
+
+    StorageReference ref = storageReference.child("/truck_images");
+    StorageUploadTask storageUploadTask =
+        ref.child(fileName).putFile(_imageFile);
+    if (storageUploadTask.isSuccessful || storageUploadTask.isComplete) {
+      final String url = await ref.getDownloadURL();
+      print("The download URL is " + url);
+    } else if (storageUploadTask.isInProgress) {
+      pr.show();
+      storageUploadTask.events.listen((event) {
+        double percentage = 100 *
+            (event.snapshot.bytesTransferred.toDouble() /
+                event.snapshot.totalByteCount.toDouble());
+        if (percentage == 100.0) {
+          pr.hide();
+          setState(() {
+            photoStatus = 'S';
+          });
+        }
+        print("THe percentage " + percentage.toString());
+      });
+
+      StorageTaskSnapshot storageTaskSnapshot =
+          await storageUploadTask.onComplete;
+      downloadUrl1 = await storageTaskSnapshot.ref.getDownloadURL();
+      // FirebaseData.uploadImage(downloadUrl1, DateTime.now().toString(), userId);
+      //Here you can get the download URL when the task has been completed.
+      print("Download URL " + downloadUrl1.toString());
+    } else {
+      // throw Exception('Image pick cancelled or intrupted');
+      print('exception occured while image upload');
+      setState(() {
+        photoStatus = 'F';
+      });
+      //Catch any cases here that might come up like canceled, interrupted
+    }
+  }
+
+  //show dialog
+  void showDialogForImage() {}
 
   @override
   Widget build(BuildContext context) {
@@ -454,7 +558,73 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           photoStatus == ''
                               ? FlatButton(
-                                  onPressed: _takePicture,
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (ctx) {
+                                          return Dialog(
+                                            elevation: 5,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Container(
+                                              height: 120,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      _takePictureFromGallery();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Icon(Icons.image),
+                                                        SizedBox(
+                                                          width: 3,
+                                                        ),
+                                                        Text(
+                                                            'Choose from gallery',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    17.0)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      _takePicture();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Icon(Icons.camera),
+                                                        SizedBox(
+                                                          width: 3,
+                                                        ),
+                                                        Text(
+                                                          'Capture Image',
+                                                          style: TextStyle(
+                                                              fontSize: 17.0),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
