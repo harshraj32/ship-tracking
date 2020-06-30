@@ -116,7 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return Center(
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.orangeAccent,
+                                  ),
                                 );
                               }
                               final doc = snapshot.data.documents;

@@ -158,26 +158,37 @@ class _CheckStatusState extends State<CheckStatus> {
                         child: Column(
                           children: <Widget>[
                             Card(
-                              // margin: EdgeInsets.only(top: 5),
-                              child:
-                              Container(
-                                 height: 200,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:NetworkImage(docId['image_url']) ,
+                                // margin: EdgeInsets.only(top: 5),
+                                child: Stack(
+                              children: <Widget>[
+                                Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.orangeAccent,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                    image: NetworkImage(docId['image_url']),
                                     fit: BoxFit.fill,
-                                  )
-                                ) ,
-                              )
-                              
-                              //  Image.network(
-                              //   docId['image_url'],
-                              //   height: 200,
-                              //   width: double.infinity,
-                              //   fit: BoxFit.fill,
-                              // ),
-                            ),
+                                  )),
+                                ),
+                              ],
+                            )
+
+                                //  Image.network(
+                                //   docId['image_url'],
+                                //   height: 200,
+                                //   width: double.infinity,
+                                //   fit: BoxFit.fill,
+                                // ),
+                                ),
                             SizedBox(
                               height: 10,
                             ),
@@ -218,12 +229,12 @@ class _CheckStatusState extends State<CheckStatus> {
                                 )
                               ],
                             ),
-                           
                             Divider(),
                             ListTile(
                               title: Text(
-                                dataOrder['sr_no']==''?'not assigned yet':
-                                dataOrder['sr_no'],
+                                dataOrder['sr_no'] == ''
+                                    ? 'not assigned yet'
+                                    : dataOrder['sr_no'],
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                               subtitle: Text(
@@ -250,7 +261,9 @@ class _CheckStatusState extends State<CheckStatus> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.orangeAccent,
+              ),
             );
           }
           var doc = snapshot.data.documents;
