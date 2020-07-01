@@ -32,7 +32,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   bool isCodeSent = false;
   String _verificationId;
-
+  
+  var isLoading=false;
   @override
   void initState() {
     super.initState();
@@ -57,7 +58,7 @@ class _OTPScreenState extends State<OTPScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body:isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.orangeAccent,),): SingleChildScrollView(
         child: Column(
           children: <Widget>[
             PreferredSize(
@@ -222,14 +223,19 @@ class _OTPScreenState extends State<OTPScreen> {
         codeSent: codeSent,
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
-
   void _onFormSubmitted() async {
     print('on form submit');
+    setState(() {
+      isLoading=true;
+    });
     AuthCredential _authCredential = PhoneAuthProvider.getCredential(
         verificationId: _verificationId, smsCode: _pinEditingController.text);
     _firebaseAuth
         .signInWithCredential(_authCredential)
         .then((AuthResult value) async{
+          setState(() {
+            isLoading=false;
+          });
       if (value.user != null) {
         // print(value.user.phoneNumber);
        var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
