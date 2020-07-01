@@ -120,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print(_selectedTyres);
       // print(dou);
       if (_selectedTyres == 'Select tyres' && downloadUrl1 == null) {
+        print('if condition entered');
         showDialog(
             barrierDismissible: false,
             context: context,
