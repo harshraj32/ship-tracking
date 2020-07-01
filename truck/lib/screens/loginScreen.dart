@@ -19,6 +19,10 @@ class _LoginScreenState extends State<LoginScreen> {
       updateState(() {
         isValid = true;
       });
+    } else {
+      setState(() {
+        isValid = false;
+      });
     }
   }
 
@@ -151,12 +155,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Theme.of(context).primaryColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0)),
-                            child: Text(
-                              !isValid ? "ENTER PHONE NUMBER" : "CONTINUE",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold),
+                            child: FittedBox(
+                              child: Text(
+                                !isValid ? "ENTER PHONE NUMBER" : "CONTINUE",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                             onPressed: () {
                               if (isValid) {
