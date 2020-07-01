@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _formKey.currentState.save();
       print(_selectedTyres);
       // print(dou);
-      if (_selectedTyres == 'Select tyres' && downloadUrl1 == null) {
+      if (_selectedTyres == 'Select tyres' || downloadUrl1 == null) {
         showDialog(
             barrierDismissible: false,
             context: context,
