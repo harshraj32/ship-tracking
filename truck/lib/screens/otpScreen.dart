@@ -58,7 +58,7 @@ class _OTPScreenState extends State<OTPScreen> {
           },
         ),
       ),
-      body:isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.orangeAccent,),): SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             PreferredSize(
@@ -117,7 +117,8 @@ class _OTPScreenState extends State<OTPScreen> {
                     color: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0.0)),
-                    child: Text(
+                    child: isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.orangeAccent,),):
+                    Text(
                       "ENTER OTP",
                       style: TextStyle(
                           color: Colors.white,
@@ -183,9 +184,15 @@ class _OTPScreenState extends State<OTPScreen> {
          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
        }
         } else {
+           setState(() {
+            isLoading=false;
+          });
           showToast("Error validating OTP, try again", Colors.red);
         }
       }).catchError((error) {
+         setState(() {
+            isLoading=false;
+          });
         showToast("Try again in sometime", Colors.red);
       });
     };
@@ -233,9 +240,7 @@ class _OTPScreenState extends State<OTPScreen> {
     _firebaseAuth
         .signInWithCredential(_authCredential)
         .then((AuthResult value) async{
-          setState(() {
-            isLoading=false;
-          });
+         
       if (value.user != null) {
         // print(value.user.phoneNumber);
        var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
@@ -255,9 +260,15 @@ class _OTPScreenState extends State<OTPScreen> {
        
        
       } else {
+         setState(() {
+            isLoading=false;
+          });
         showToast("Error validating OTP, try again", Colors.red);
       }
     }).catchError((error) {
+       setState(() {
+            isLoading=false;
+          });
       showToast("Something went wrong", Colors.red);
     });
   }
