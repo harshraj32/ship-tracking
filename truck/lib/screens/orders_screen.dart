@@ -99,12 +99,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     children: <Widget>[
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).pushNamed(CheckStatus.route,
-                              arguments: {
-                                'docId': singleDoc.documentID,
-                                'image_url': document[index]['image_url'],
-                                'data':document[index],
-                              });
+                          Navigator.of(context)
+                              .pushNamed(CheckStatus.route, arguments: {
+                            'docId': singleDoc.documentID,
+                            'image_url': document[index]['image_url'],
+                            'data': document[index],
+                          });
                         },
                         child: buildListTile(
                           index + 1,
