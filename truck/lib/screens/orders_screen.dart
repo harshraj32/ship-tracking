@@ -30,14 +30,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.initState();
   }
 
-  Widget buildListTile(index, sr_status, title, s1, s2) {
+  Widget buildListTile(index, status, title, s1, s2) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor:
-            sr_status != '' ? Colors.greenAccent : Colors.redAccent,
+        backgroundColor:Colors.orangeAccent,
         radius: 23,
         child: Text(
-          index.toString(),
+          status=='Booked'?'B':(status=='Up'?'U':'D'),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
       ),
@@ -110,7 +109,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         },
                         child: buildListTile(
                           index + 1,
-                          sr_status,
+                          document[index]['status'],
                           document[index]['TruckNumber'],
                           document[index]['Tyres'],
                           document[index]['date'],
