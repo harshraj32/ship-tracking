@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Tyres': _selectedTyres,
         'date': Timestamp.now(),
         'image_url': downloadUrl1,
-        'sr_no': '',
+        'sr_no': DateTime.now().millisecondsSinceEpoch.toString(),
       }).then((doc) {
         print('hop ${docReference.documentID}');
         status = "success";
