@@ -33,14 +33,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget buildListTile(index, status, title, s1, s2) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor:Colors.orangeAccent,
+        backgroundColor: Colors.orangeAccent,
         radius: 23,
         child: Text(
-          status=='Booked'?'B':(status=='Up'?'U':'D'),
+          status == 'Booked' ? 'B' : (status == 'Up' ? 'U' : 'D'),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
       ),
-      title: Text(title),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       subtitle: Text('Tyres: ' + s1),
       trailing: Icon(Icons.chevron_right),
     );
