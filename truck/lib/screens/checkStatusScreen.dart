@@ -229,18 +229,48 @@ class _CheckStatusState extends State<CheckStatus> {
                                 )
                               ],
                             ),
-                            Divider(),
-                            ListTile(
-                              title: Text(
-                                dataOrder['sr_no'] == ''
-                                    ? 'not assigned yet'
-                                    : dataOrder['sr_no'],
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              subtitle: Text(
-                                'Serial Number',
-                                style: TextStyle(fontSize: 12),
-                              ),
+                            Row(
+                              children: <Widget>[
+                                Container(
+                                  // width:double.infinity/2 ,
+                                  width: MediaQuery.of(context).size.width *
+                                      2.5 /
+                                      6,
+                                  child: ListTile(
+                                    title: Text(
+                                      dataOrder['sr_no'] == ''
+                                          ? 'not assigned yet'
+                                          : dataOrder['sr_no'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: Text(
+                                      'Serial Number',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                                Divider(),
+                                Expanded(
+                                  child: Container(
+                                    child: ListTile(
+                                      title: Text(
+                                        dataOrder['status'] == 'Booked'
+                                            ? 'Booked'
+                                            : (dataOrder['status'] == 'Up'
+                                                ? 'Up'
+                                                : 'Down'),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: Text(
+                                        'Status',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ],
                         ),
