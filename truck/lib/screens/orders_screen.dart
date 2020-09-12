@@ -57,13 +57,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
       body: StreamBuilder(
           stream: Firestore.instance
               .collection('/users/${uid}/orders')
-              .orderBy('date', descending: true)
+              // .orderBy('date', descending: true)
               .snapshots(),
           builder: (context, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Text('Loading..'));
             }
             final document = userSnapshot.data.documents;
+            print("docs fetched:");
+            print(document);
             if (document.length == 0) {
               return Center(
                 child: Container(
