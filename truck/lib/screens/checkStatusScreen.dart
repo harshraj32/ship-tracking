@@ -282,7 +282,7 @@ class _CheckStatusState extends State<CheckStatus> {
           latlng1 = latlng;
           return len == 0
               ? Center(
-                  child: Text('ship is not assigned yet'),
+                  child: Text('Ship is not assigned yet'),
                 )
               : GoogleMap(
                   polylines: Set<Polyline>.of(polylines.values),
