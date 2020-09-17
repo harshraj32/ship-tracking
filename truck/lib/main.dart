@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:truck/providers/userRefProvider.dart';
 import 'package:truck/screens/homeScreen.dart';
 import 'package:truck/screens/image_preview_screen.dart';
 import 'package:truck/screens/no_internet_screen.dart';
@@ -47,7 +49,14 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return 
+    MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+            create: (ctx) => UserRefProvider(),
+          ),
+    ],
+    child:MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ship Tracking',
       theme: ThemeData(
@@ -74,6 +83,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
         OrdersScreen.routeName: (ctx) => OrdersScreen(),
         ImagePreviewScreen.routeName: (ctx) => ImagePreviewScreen(),
       },
-    );
+    ) ,);
+    
   }
 }

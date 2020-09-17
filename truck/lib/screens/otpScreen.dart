@@ -23,6 +23,7 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   /// Control the input text field.
   TextEditingController _pinEditingController = TextEditingController();
 
@@ -32,8 +33,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   bool isCodeSent = false;
   String _verificationId;
-  
-  var isLoading=false;
+
+  var isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -117,14 +118,19 @@ class _OTPScreenState extends State<OTPScreen> {
                     color: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0.0)),
-                    child: isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.orangeAccent,),):
-                    Text(
-                      "ENTER OTP",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    child: isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.orangeAccent,
+                            ),
+                          )
+                        : Text(
+                            "ENTER OTP",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold),
+                          ),
                     onPressed: () {
                       if (_pinEditingController.text.length == 6) {
                         _onFormSubmitted();
@@ -161,38 +167,41 @@ class _OTPScreenState extends State<OTPScreen> {
     setState(() {
       isCodeSent = true;
     });
-    
+
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
       _firebaseAuth
           .signInWithCredential(phoneAuthCredential)
-          .then((AuthResult value)async {
+          .then((AuthResult value) async {
         if (value.user != null) {
           // Handle loogged in state
-        var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
-         print(inst.documents.length.toString()+" length");
-         if(inst.documents.length==0){
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RegistrationScreen(),
-            ),
-            (Route<dynamic> route) => false);
-       }
-       else{
-         
-         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-       }
+          print('userLogin: ' + value.user.uid.toString());
+          var inst1 = await Firestore.instance
+              .collection("keys")
+              .document(value.user.uid)
+              .get();
+          print('userInstance:' + inst1.toString());
+          if (!inst1.exists) {
+            print("Entering if!!!!!!!!!!");
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RegistrationScreen(),
+                ),
+                (Route<dynamic> route) => false);
+          } else {
+            Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+          }
         } else {
-           setState(() {
-            isLoading=false;
+          setState(() {
+            isLoading = false;
           });
           showToast("Error validating OTP, try again", Colors.red);
         }
       }).catchError((error) {
-         setState(() {
-            isLoading=false;
-          });
+        setState(() {
+          isLoading = false;
+        });
         showToast("Try again in sometime", Colors.red);
       });
     };
@@ -211,7 +220,7 @@ class _OTPScreenState extends State<OTPScreen> {
         _verificationId = verificationId;
       });
     };
-    
+
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       _verificationId = verificationId;
@@ -230,45 +239,47 @@ class _OTPScreenState extends State<OTPScreen> {
         codeSent: codeSent,
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
+
   void _onFormSubmitted() async {
     print('on form submit');
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     AuthCredential _authCredential = PhoneAuthProvider.getCredential(
         verificationId: _verificationId, smsCode: _pinEditingController.text);
     _firebaseAuth
         .signInWithCredential(_authCredential)
-        .then((AuthResult value) async{
-         
+        .then((AuthResult value) async {
       if (value.user != null) {
-        // print(value.user.phoneNumber);
-       var inst=await Firestore.instance.collection("users").document(value.user.uid).collection("profile").getDocuments();
-         print(inst.documents.length.toString()+" length");
-         if(inst.documents.length==0){
+        print(value.user.phoneNumber);
+        print('userLogin: ' + value.user.uid.toString() + " formsubmit func");
+        var inst1 = await Firestore.instance
+            .collection("keys")
+            .document(value.user.uid)
+            .get();
+        print('userInstance:' + inst1.exists.toString());
+        if (!inst1.exists) {
+          print("Entered IF!!!!!!");
           Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RegistrationScreen(),
-            ),
-            (Route<dynamic> route) => false);
-       }
-       else{
-         Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-       }
-      
-       
-       
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegistrationScreen(),
+              ),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        }
       } else {
-         setState(() {
-            isLoading=false;
-          });
+        setState(() {
+          isLoading = false;
+        });
         showToast("Error validating OTP, try again", Colors.red);
       }
     }).catchError((error) {
-       setState(() {
-            isLoading=false;
-          });
+      print(error.toString());
+      setState(() {
+        isLoading = false;
+      });
       showToast("Something went wrong", Colors.red);
     });
   }
