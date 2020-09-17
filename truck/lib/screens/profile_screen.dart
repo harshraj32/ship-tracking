@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:truck/providers/userRefProvider.dart';
 // import 'package:truck/screens/registration_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -19,8 +21,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   var _yob = '';
   var _pyl = '';
   var phno = '';
-
-  Future<void> _trySubmit() async {
+  
+  Future<void> _trySubmit(userRefId) async {
     FocusScope.of(context).unfocus();
     final _isValid = _formKey.currentState.validate();
     var _date = DateTime.now();
@@ -31,13 +33,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print(_email.trim());
       print(_yob);
       print(_pyl);
-
+      
       var uinstance =
-          await Firestore.instance.collection('/users/${uid}/profile');
+          await Firestore.instance.collection('users').document(userRefId);
 
-      var ref = await uinstance.getDocuments();
-
-      await uinstance.document(ref.documents[0].documentID).updateData({
+      await uinstance.updateData({
         'Full Name': _fullName,
         'Email': _email,
         'YOB': _yob,
@@ -77,9 +77,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
     super.initState();
   }
+  
 
   @override
   Widget build(BuildContext context) {
+    var userRefID=Provider.of<UserRefProvider>(context,listen: false).userReference;
+    print("userref fetched from provider: "+userRefID);
     AppBar appbar = AppBar(
       // backgroundColor: Colors.transparent,
       title: Text('Profile'),
@@ -110,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                         child: StreamBuilder(
                             stream: Firestore.instance
-                                .collection('users/${uid}/profile')
+                                .collection('users').document(userRefID)
                                 .snapshots(),
                             builder: (ctx, snapshot) {
                               if (snapshot.connectionState ==
@@ -120,8 +123,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     backgroundColor: Colors.orangeAccent,
                                   ),
                                 );
-                              }
-                              final doc = snapshot.data.documents;
+                              } 
+                              final doc = snapshot.data;
                               return SingleChildScrollView(
                                 child: Column(
                                   children: <Widget>[
@@ -129,24 +132,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: abh + 20,
                                     ),
                                     buildTile(Icon(Icons.person),
-                                        doc[0]['Full Name'], "Name"),
+                                        doc['Full Name'], "Name"),
                                     Divider(),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     buildTile(Icon(Icons.email),
-                                        doc[0]['Email'], "Email"),
+                                        doc['Email'], "Email"),
                                     Divider(),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     buildTile(Icon(Icons.phone),
-                                        doc[0]['Phone'], "Phone Number"),
+                                        doc['Phone'], "Phone Number"),
                                     Divider(),
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    buildTile(Icon(Icons.today), doc[0]['YOB'],
+                                    buildTile(Icon(Icons.today), doc['YOB'],
                                         "Year of Birth"),
                                     Divider(),
                                     SizedBox(
@@ -210,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .showBottomSheet((context) {
                       return StreamBuilder(
                           stream: Firestore.instance
-                              .collection('/users/${uid}/profile')
+                              .collection('users').document(userRefID)
                               .snapshots(),
                           builder: (context, uSnapshot) {
                             if (uSnapshot.connectionState ==
@@ -219,7 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Text('Loading...'),
                               );
                             }
-                            final document = uSnapshot.data.documents;
+                            final document = uSnapshot.data;
                             return Container(
                                 color: Colors.white,
                                 width: MediaQuery.of(context).size.width,
@@ -240,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             new ListTile(
                                               leading: Icon(Icons.person),
                                               title: new TextFormField(
-                                                initialValue: document[0]
+                                                initialValue: document
                                                     ['Full Name'],
                                                 key: ValueKey('FullName'),
                                                 decoration: InputDecoration(
@@ -268,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               leading: Icon(Icons.email),
                                               title: new TextFormField(
                                                 initialValue: _email =
-                                                    document[0]['Email'],
+                                                    document['Email'],
                                                 key: ValueKey('EmailId'),
                                                 decoration: InputDecoration(
                                                   labelText: "Email",
@@ -297,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               leading: Icon(Icons.today),
                                               title: new TextFormField(
                                                 initialValue: _yob =
-                                                    document[0]['YOB'],
+                                                    document['YOB'],
                                                 key: ValueKey('YoB'),
                                                 keyboardType:
                                                     TextInputType.number,
@@ -326,7 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               leading: Icon(Icons.place),
                                               title: new TextFormField(
                                                 initialValue: _pyl =
-                                                    document[0]['PYL'],
+                                                    document['PYL'],
                                                 key: ValueKey('Place'),
                                                 decoration: InputDecoration(
                                                   labelText: "Place you live",
@@ -377,7 +380,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               FontWeight.bold),
                                                     ),
                                                     onPressed: () {
-                                                      _trySubmit();
+                                                      _trySubmit(userRefID);
                                                     },
                                                     padding:
                                                         EdgeInsets.all(16.0),

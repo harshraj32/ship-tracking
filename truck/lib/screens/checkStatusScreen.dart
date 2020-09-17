@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:provider/provider.dart';
+import 'package:truck/providers/userRefProvider.dart';
 import 'package:truck/screens/image_preview_screen.dart';
 
 class CheckStatus extends StatefulWidget {
@@ -134,7 +136,8 @@ class _CheckStatusState extends State<CheckStatus> {
       print("docID:" + docId['docId']);
       print("image_url:" + docId['image_url']);
     }
-
+    var userRefId = Provider.of<UserRefProvider>(context,listen: false).userReference;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Tracking'),
@@ -282,7 +285,7 @@ class _CheckStatusState extends State<CheckStatus> {
       body: StreamBuilder(
         stream: Firestore.instance
             .collection('users')
-            .document(uid)
+            .document(userRefId)
             .collection('orders')
             .document(docId['docId'])
             .collection('coordinates')

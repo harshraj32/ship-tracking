@@ -46,17 +46,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(_email.trim());
       print(_yob);
       print(_pyl);
-      await Firestore.instance.collection('/users/${uid}/profile').add({
-        'Full Name': _fullName,
+      final collRef = Firestore.instance.collection('users');
+      DocumentReference docReference = collRef.document();
+      final docRef1 = Firestore.instance.collection('keys').document(uid);
+      docReference.setData({
+       'Full Name': _fullName,
         'Email': _email,
         'Phone': _phone,
         'YOB': _yob,
         'PYL': _pyl,
         'date': _date,
-      }).then((value) {
-        // showSnackBar();
+      }).then((value)async {
+        await docRef1.setData({
+          'refId':docReference.documentID
+        });
+      }).then((value){
         Navigator.of(context).pushReplacementNamed('/homeScreen');
       });
+      // await Firestore.instance.collection('/users/${uid}/profile').add({
+      //   'Full Name': _fullName,
+      //   'Email': _email,
+      //   'Phone': _phone,
+      //   'YOB': _yob,
+      //   'PYL': _pyl,
+      //   'date': _date,
+      // }).then((value) {
+      //   // showSnackBar();
+      //   Navigator.of(context).pushReplacementNamed('/homeScreen');
+      // });
     }
   }
 

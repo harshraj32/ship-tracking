@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:truck/providers/userRefProvider.dart';
 import 'package:truck/screens/confirmationScreen.dart';
 import 'package:truck/screens/loginScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -110,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _trySubmit() async {
+  Future<void> _trySubmit(userRefId) async {
     FocusScope.of(context).unfocus();
     final _isValid = _formKey.currentState.validate();
     // var _date = DateTime.now();
@@ -143,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      final collRef = Firestore.instance.collection('/users/${uid}/orders');
+      final collRef = Firestore.instance.collection('/users/${userRefId}/orders');
       DocumentReference docReference = collRef.document();
       String status = "";
       docReference.setData({
@@ -152,7 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
         'date': Timestamp.now(),
         'image_url': downloadUrl1,
         'sr_no': DateTime.now().millisecondsSinceEpoch.toString(),
-        'status':'Booked'
+        'status': 'Booked',
+        'shipId':'NA'
       }).then((doc) {
         print('hop ${docReference.documentID}');
         status = "success";
@@ -200,6 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void registerNotification() {
+    var userRefId = Provider.of<UserRefProvider>(context,listen: false).userReference;
+    
     firebaseMessaging.requestNotificationPermissions();
 
     firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
@@ -217,11 +222,11 @@ class _HomeScreenState extends State<HomeScreen> {
     firebaseMessaging.getToken().then((token) async {
       print('token: $token');
       var uinstance =
-          await Firestore.instance.collection('/users/${uid}/profile');
+          await Firestore.instance.collection('users');
 
-      var ref = await uinstance.getDocuments();
+      // var ref = await uinstance.getDocuments();
       await uinstance
-          .document(ref.documents[0].documentID)
+          .document(userRefId)
           .updateData({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
@@ -396,10 +401,28 @@ class _HomeScreenState extends State<HomeScreen> {
   //show dialog
   void showDialogForImage() {}
 
+  var isfirst = true;
+  var fetchStatus=false;
+  @override
+  void didChangeDependencies() async {
+    if (isfirst) {
+      await Provider.of<UserRefProvider>(context, listen: false)
+          .fetchRef()
+          .then((value) {
+        setState(() {
+          isfirst = false;
+          fetchStatus=true;
+        });
+      });
+    }
+
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context, isDismissible: false);
-
+    var userRefId = Provider.of<UserRefProvider>(context,listen: false).userReference;
     print('connection status:- ' + connectionStatus.toString());
     return !connectionStatus
         ? Scaffold(
@@ -410,6 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
             appBar: AppBar(
               title: Text("Registration"),
               actions: [
+                if(fetchStatus)
                 DropdownButton(
                     icon: Icon(
                       Icons.more_vert,
@@ -477,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             body: !connectionStatus
                 ? NoInternetScreen()
-                : SingleChildScrollView(
+                : fetchStatus?  SingleChildScrollView(
                     child: Container(
                       margin: EdgeInsets.all(10),
                       child: Form(
@@ -670,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   onPressed: () {
-                                    _trySubmit();
+                                    _trySubmit(userRefId);
                                   },
                                   padding: EdgeInsets.all(16.0),
                                 ),
@@ -686,7 +710,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]),
                       ),
                     ),
-                  ),
+                  ):Center(
+            child: CircularProgressIndicator(),
+          ),
           );
   }
 }

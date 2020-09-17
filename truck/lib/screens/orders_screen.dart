@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:truck/providers/userRefProvider.dart';
 import 'package:truck/screens/checkStatusScreen.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -53,6 +55,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userRefId = Provider.of<UserRefProvider>(context,listen: false).userReference;
     print('entered build:order screen');
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +63,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       ),
       body: StreamBuilder(
           stream: Firestore.instance
-              .collection('/users/${uid}/orders')
+              .collection('/users/${userRefId}/orders')
               // .orderBy('date', descending: true)
               .snapshots(),
           builder: (context, userSnapshot) {
