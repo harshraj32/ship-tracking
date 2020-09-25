@@ -7,7 +7,7 @@ const fcm = admin.messaging();
 
 var newData;
  
-exports.sendNotification = functions.firestore.document('users/{userId}/orders/{orderId}').onUpdate(async (snapshot, context) => {
+exports.sendNotification = functions.firestore.document('users/{userRefId}/orders/{orderId}').onUpdate(async (snapshot, context) => {
    
     
     if (snapshot.empty) {
@@ -16,23 +16,26 @@ exports.sendNotification = functions.firestore.document('users/{userId}/orders/{
     }
  
     newData = snapshot.after.data();
-    const userId = context.params.userId;
+    const userRefId = context.params.userRefId;
  
-    const deviceIdTokens = await admin
+    const deviceIdToken = await admin
         .firestore()
-        .collection('users').doc(userId).collection('profile')
+        .collection('users')
+        .doc(userRefId)
         .get();
  
     var tokens = [];
  
-    for (var token of deviceIdTokens.docs) {
-        tokens.push(token.data().pushToken);
-    }
+    
+        if(deviceIdToken !== undefined)
+       { tokens.push(deviceIdToken.data().pushToken);}
+       
+    
 
     var payload = {
         notification: {
             title: 'Your Truck Details',
-            body:  "Truck No: "+newData.TruckNumber+ "  "+"Sr No: "+newData.sr_no+"  "+"Tyres: "+newData.Tyres,
+            body:  "Truck No: "+newData.TruckNumber+ "  "+"Sr No: "+newData.sr_no+"\n"+"Ship Id: "+newData.shipId+"  "+"Tyres: "+newData.Tyres,
             sound: 'default',
         },
         data: {
