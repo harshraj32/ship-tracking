@@ -7,6 +7,8 @@ class NoInternetScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
               height: 25,
